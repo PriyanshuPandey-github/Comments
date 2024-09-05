@@ -1,10 +1,9 @@
 
-import Comment from './components/comments'
+import Comment from './components/CommentSection'
 function App() {
   return (
     <>
       <Comment />
-
     </>
   )
 }
