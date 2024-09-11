@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { upvoteicon, downvoteicon, usericon } from "../assets/assets";
 
-const CommentActions = ({ comment, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user }) => {
+const CommentActions = ({ comment, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user, isJoined }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const handleCopy = () => {
@@ -58,7 +58,7 @@ const CommentActions = ({ comment, handleUpvote, handleDownvote, onDelete, onEdi
   );
 };
 
-const CommentReply = ({ showReplies, setShowReplies, comment, handleaddreply, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user }) => {
+const CommentReply = ({ showReplies, setShowReplies, comment, handleaddreply, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user, isJoined }) => {
   const [replyboxon, setreplyboxon] = useState(false);
   const [replyvalue, setreplyvalue] = useState('');
 
@@ -72,9 +72,15 @@ const CommentReply = ({ showReplies, setShowReplies, comment, handleaddreply, ha
 
   return (
     <div className="ml-6 min-w-[50vw] w-auto overflow-x-wrap tracking-widest mt-4 pl-4">
-      <button onClick={() => setreplyboxon(!replyboxon)} className="text-sm text-white px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition-all duration-500 " >
-        {replyboxon ? 'Cancel' : 'Reply'}
-      </button>
+      {isJoined ? (
+        <button onClick={() => setreplyboxon(!replyboxon)} className="text-sm text-white px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition-all duration-500 " >
+          {replyboxon ? 'Cancel' : 'Reply'}
+        </button>
+      ) : (
+        <button className="text-sm text-red-500 px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition-all duration-500 " disabled>
+          Reply
+        </button>
+      )}
       {comment.replies.length > 0 && (
         <button onClick={() => setShowReplies(!showReplies)} className="text-sm text-white px-3 py-1 rounded-md hover:bg-blue-600 hover:text-white transition-all duration-500 ml-2">
           {showReplies ? 'Hide' : 'Show'} {comment.replies.length} replies
@@ -128,7 +134,7 @@ const CommentText = ({ comment, isEditing, setIsEditing, editedText, setEditedTe
   );
 };
 
-const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user }) => {
+const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user, isJoined }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedText, setEditedText] = useState(comment.text);
     const [showReplies, setShowReplies] = useState(false);
@@ -151,7 +157,7 @@ const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDele
 
       <div className="text-wrap bg-zinc-800 text-white rounded-lg p-4 shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)]">
         
-        <CommentActions comment={comment} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} />
+        <CommentActions comment={comment} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} isJoined={isJoined} />
         <div className="flex items-center space-x-2">
           <img src={usericon} className="w-7 h-7 rounded-full" alt="" />
           <div>
@@ -159,7 +165,7 @@ const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDele
           </div>
         </div>
         <CommentText comment={comment} isEditing={isEditing} setIsEditing={setIsEditing} editedText={editedText} setEditedText={setEditedText} />
-        <CommentReply showReplies={showReplies} setShowReplies={setShowReplies} comment={comment} handleaddreply={handleaddreply} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} />
+        <CommentReply showReplies={showReplies} setShowReplies={setShowReplies} comment={comment} handleaddreply={handleaddreply} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} isJoined={isJoined} />
       </div>
       {showReplies && comment.replies.length > 0 && (
         <div className="ml-4 mt-4">
@@ -174,13 +180,15 @@ const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDele
               onEdit={() => setIsEditing(true)}
               onCopy={onCopy}
               user={user}
+              isJoined={isJoined}
               depth={comment.depth + 1} // Increase depth for nested replies
             />
           ))}
         </div>
       )}
-    </div>
+          </div>
   );
 };
 
 export default Comment;
+   

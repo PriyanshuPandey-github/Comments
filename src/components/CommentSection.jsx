@@ -15,6 +15,14 @@ const CommentSection = () => {
     localStorage.setItem('user', user);
   }, [comments, user]);
 
+  useEffect(() => {
+    if (!isJoined) {
+      setComments(
+        JSON.parse(localStorage.getItem('comments')) || []
+      );
+    }
+  }, [isJoined]);
+
   // Helper to find and update the comment by id recursively
   const findcommentupdate = (id, commentsArray, callback) => {
     return commentsArray.map((comment) => {
@@ -111,11 +119,10 @@ const CommentSection = () => {
 
   const changeUser = (e) => {
     setUser(e.target.value);
-  };
-
-  const handleJoin = () => {
-    if (user) {
+    if (e.target.value.trim()) {
       setIsJoined(true);
+    } else {
+      setIsJoined(false);
     }
   };
 
@@ -154,12 +161,6 @@ const CommentSection = () => {
           placeholder="Your email"
           className="bg-zinc-800 shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] hover:bg-blue-800 transition-all duration-300 text-white py-1 px-3 rounded-md"
         />
-        <button
-          onClick={handleJoin}
-          className="bg-blue-500 text-white ml-1 py-2 px-4 rounded-lg hover:bg-blue-600"
-        >
-          Join
-        </button>
         </div>
       </div>
       <div>
@@ -174,6 +175,7 @@ const CommentSection = () => {
             onEdit={handleEdit}
             onCopy={handleCopy}
             user={user}
+            isJoined={isJoined}
           />
         ))}
       </div>
