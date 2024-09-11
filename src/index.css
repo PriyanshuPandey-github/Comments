@@ -2,23 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-
-.comment-section {
-  margin: 20px;
-}
-
-.comment-list {
-  list-style: none;
-  padding: 0;
-}
-
-.comment-item {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.comment-reply {
-  margin-left: 20px; /* Indentation for replies */
+#root{
+  width: 100%;
+  height: 100vh;
+  background-color: black;
 }
