@@ -129,16 +129,26 @@ const CommentText = ({ comment, isEditing, setIsEditing, editedText, setEditedTe
 };
 
 const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDelete, onEdit, onCopy, user }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState(comment.text);
-  const [showReplies, setShowReplies] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedText, setEditedText] = useState(comment.text);
+    const [showReplies, setShowReplies] = useState(false);
+    const maxDepth = 5; // Maximum depth for nested replies
+    const minCommentWidth = '50vw';
 
   useEffect(() => {
     setEditedText(comment.text);
   }, [comment.text]);
 
   return (
-    <div className="ml-6 min-w-[50%] w-auto overflow-x-wrap tracking-widest mt-4 border-l-2 border-white pl-4">
+    <div
+      className="ml-6 min-w-[50%] w-auto overflow-x-wrap tracking-widest mt-4 border-l-2 border-white pl-4"
+      style={{
+        minWidth: minCommentWidth,
+        maxWidth: `calc(100% - ${comment.depth * 20}px)`, // Reduce width based on depth
+        marginLeft: `${comment.depth * 20}px`, // Increase margin based on depth
+      }}
+    >
+
       <div className="text-wrap bg-zinc-800 text-white rounded-lg p-4 shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)]">
         
         <CommentActions comment={comment} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} />
@@ -151,10 +161,21 @@ const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDele
         <CommentText comment={comment} isEditing={isEditing} setIsEditing={setIsEditing} editedText={editedText} setEditedText={setEditedText} />
         <CommentReply showReplies={showReplies} setShowReplies={setShowReplies} comment={comment} handleaddreply={handleaddreply} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} />
       </div>
-      {showReplies && (
+      {showReplies && comment.replies.length > 0 && (
         <div className="ml-4 mt-4">
-          {comment.replies.map((reply) => (
-            <Comment key={reply.id} comment={reply} handleaddreply={handleaddreply} handleUpvote={handleUpvote} handleDownvote={handleDownvote} onDelete={onDelete} onEdit={() => setIsEditing(true)} onCopy={onCopy} user={user} />
+          {comment.replies.map((reply, index) => (
+            <Comment
+              key={reply.id}
+              comment={reply}
+              handleaddreply={handleaddreply}
+              handleUpvote={handleUpvote}
+              handleDownvote={handleDownvote}
+              onDelete={onDelete}
+              onEdit={() => setIsEditing(true)}
+              onCopy={onCopy}
+              user={user}
+              depth={comment.depth + 1} // Increase depth for nested replies
+            />
           ))}
         </div>
       )}
@@ -163,9 +184,3 @@ const Comment = ({ comment, handleaddreply, handleUpvote, handleDownvote, onDele
 };
 
 export default Comment;
-
-
-
-
-
-
